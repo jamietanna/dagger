@@ -1,6 +1,6 @@
 require 'json'
 
-body = JSON.parse(ARGV.read(''))
+body = JSON.parse(ARGV.read)
 body['packages'].reject! do |v|
   # remove fields that the GitHub Dependency Submission API doesn't like
   v['name'].start_with?('golang-version:') ||
