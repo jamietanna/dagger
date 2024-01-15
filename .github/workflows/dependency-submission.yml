@@ -10,31 +10,19 @@ jobs:
     permissions:
       id-token: write
       contents: write
-
     steps:
     - uses: actions/checkout@v4
-
-    - name: Set up Go
-      uses: actions/setup-go@v3
-      with:
-        go-version: stable
-
-    - name: Install `renovate-to-sbom`
-      run: |
-        go install dmd.tanna.dev/cmd/renovate-to-sbom@latest
-
-    - name: Retrieve package data with renovate-graph
-      run: |
-        env RG_DELETE_CLONED_REPOS=true RG_INCLUDE_UPDATES=false RG_LOCAL_PLATFORM=github RG_LOCAL_ORGANISATION=dagger RG_LOCAL_REPO=dagger npx @jamietanna/renovate-graph@latest --platform local
-
     - name: Generate SBOM
+      # generation command documentation: https://github.com/microsoft/sbom-tool#sbom-generation
       run: |
-        renovate-to-sbom out/github-dagger-dagger.json --out-format spdx2.3+json
+        curl -Lo $RUNNER_TEMP/sbom-tool https://github.com/microsoft/sbom-tool/releases/latest/download/sbom-tool-linux-x64
+        chmod +x $RUNNER_TEMP/sbom-tool
+        $RUNNER_TEMP/sbom-tool generate -b . -bc . -pn $ -pv 1.0.0 -ps OwnerName -nsb https://sbom.mycompany.com -V Verbose
     - uses: actions/upload-artifact@v3
       with:
-        name: out
-        path: out
+        name: sbom
+        path: _manifest/spdx_2.2
     - name: SBOM upload
       uses: advanced-security/spdx-dependency-submission-action@v0.0.1
       with:
-        filePath: out/github-dagger-dagger.json.spdx2.3.json
+        filePath: "_manifest/spdx_2.2/"
