@@ -25,7 +25,7 @@ jobs:
 
     - name: Retrieve package data with renovate-graph
       run: |
-        env RG_DELETE_CLONED_REPOS=true RG_INCLUDE_UPDATES=false RG_LOCAL_PLATFORM=github RG_LOCAL_ORGANISATION=dagger RG_LOCAL_REPO=dagger npx @jamietanna/renovate-graph@latest --platform local
+        env RG_DELETE_CLONED_REPOS=true RG_INCLUDE_UPDATES=true RG_LOCAL_PLATFORM=github RG_LOCAL_ORGANISATION=dagger RG_LOCAL_REPO=dagger npx @jamietanna/renovate-graph@latest --platform local
 
     - name: Generate SBOM
       run: |
