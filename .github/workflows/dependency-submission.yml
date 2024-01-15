@@ -1,0 +1,40 @@
+name: SBOM upload
+
+on:
+  workflow_dispatch:
+  push: {}
+
+jobs:
+  SBOM-upload:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: write
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Go
+      uses: actions/setup-go@v3
+      with:
+        go-version: stable
+
+    - name: Install `renovate-to-sbom`
+      run: |
+        go install dmd.tanna.dev/cmd/renovate-to-sbom@latest
+
+    - name: Retrieve package data with renovate-graph
+      run: |
+        env RG_DELETE_CLONED_REPOS=true RG_INCLUDE_UPDATES=false RG_LOCAL_PLATFORM=github RG_LOCAL_ORGANISATION=dagger RG_LOCAL_REPO=dagger npx @jamietanna/renovate-graph@latest --platform local
+
+    - name: Generate SBOM
+      run: |
+        renovate-to-sbom out/github-dagger-dagger.json --out-format spdx2.3+json
+    - uses: actions/upload-artifact@v3
+      with:
+        name: out
+        path: out
+    - name: SBOM upload
+      uses: advanced-security/spdx-dependency-submission-action@v0.0.1
+      with:
+        filePath: out/github-dagger-dagger.json.spdx2.3.json
