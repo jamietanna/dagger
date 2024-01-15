@@ -30,12 +30,18 @@ jobs:
     - name: Generate SBOM
       run: |
         renovate-to-sbom out/github-dagger-dagger.json --out-format spdx2.3+json
+
+    - name: HACK
+      run: |
+        ruby trim-sbom.rb out/github-dagger-dagger.json.spdx2.3.json > out/github-dagger-dagger.json.spdx2.3.trimmed.json
+
     - uses: actions/upload-artifact@v3
       with:
         name: out
         path: out
+
     - name: SBOM upload
       uses: advanced-security/spdx-dependency-submission-action@v0.0.1
       with:
         filePath: out
-        filePattern: github-dagger-dagger.json.spdx2.3.json
+        filePattern: github-dagger-dagger.json.spdx2.3.trimmed.json
