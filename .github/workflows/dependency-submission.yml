@@ -41,4 +41,4 @@ jobs:
       uses: advanced-security/spdx-dependency-submission-action@v0.0.1
       with:
         filePath: out
-        filePattern: github-dagger-dagger.json.spdx2.3.trimmed.json
+        filePattern: github-dagger-dagger.json.spdx2.3.json
