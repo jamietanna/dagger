@@ -1,8 +1,10 @@
-name: SBOM upload
+name: Discover dependencies via `renovate-graph` and upload via the Dependency Submission API
 
 on:
   workflow_dispatch:
-  push: {}
+  push:
+    branches:
+      - main
 
 jobs:
   SBOM-upload:
@@ -21,12 +23,24 @@ jobs:
 
     - name: Install `renovate-to-sbom`
       run: |
-        # TODO: latest
-        go install dmd.tanna.dev/cmd/renovate-to-sbom@aa796b0366ce14ba39686849b18b6d2395deacc4
+        go install dmd.tanna.dev/cmd/renovate-to-sbom@latest
 
     - name: Retrieve package data with renovate-graph
       run: |
-        env RG_DELETE_CLONED_REPOS=true RG_INCLUDE_UPDATES=true RG_LOCAL_PLATFORM=github RG_LOCAL_ORGANISATION=dagger RG_LOCAL_REPO=dagger npx @jamietanna/renovate-graph@latest --platform local
+        # `--platform local` and the `RG_LOCAL_` environment variables are
+        # further documented in
+        # https://www.jvt.me/posts/2023/10/13/renovate-graph-local/ and improve
+        # the speed of dependency scanning
+        npx @jamietanna/renovate-graph@latest --platform local
+      with:
+        # As well as looking for pending updates, this also resolves version
+        # constraints such as `~= 0.3` to `0.3.1`
+        RG_INCLUDE_UPDATES: true
+
+        # variables for `--platform local`
+        RG_LOCAL_PLATFORM: github
+        RG_LOCAL_ORGANISATION: dagger
+        RG_LOCAL_REPO: dagger
 
     - name: Generate SBOM
       run: |
