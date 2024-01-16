@@ -32,7 +32,7 @@ jobs:
         # https://www.jvt.me/posts/2023/10/13/renovate-graph-local/ and improve
         # the speed of dependency scanning
         npx @jamietanna/renovate-graph@latest --platform local
-      with:
+      env:
         # As well as looking for pending updates, this also resolves version
         # constraints such as `~= 0.3` to `0.3.1`
         RG_INCLUDE_UPDATES: true
