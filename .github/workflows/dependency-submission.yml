@@ -22,7 +22,7 @@ jobs:
     - name: Install `renovate-to-sbom`
       run: |
         # TODO: latest
-        go install dmd.tanna.dev/cmd/renovate-to-sbom@73ffee306da2d386d902b4ec18628688a103869c
+        go install dmd.tanna.dev/cmd/renovate-to-sbom@aa796b0366ce14ba39686849b18b6d2395deacc4
 
     - name: Retrieve package data with renovate-graph
       run: |
