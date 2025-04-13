@@ -46,7 +46,7 @@ jobs:
       run: |
         renovate-to-sbom out/github-dagger-dagger.json --out-format spdx2.3+json --only-include-known-purl-types
 
-    - uses: actions/upload-artifact@v3
+    - uses: actions/upload-artifact@v4
       with:
         name: out
         path: out
